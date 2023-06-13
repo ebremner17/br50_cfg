@@ -1,0 +1,4 @@
+name: 'Branch 50 RCL Config'
+description: 'Configuration for Branch 50 RCL'
+type: module
+core_version_requirement: '^9'
