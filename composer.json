@@ -1,0 +1,7 @@
+{
+    "name": "ebremner17/br50_cfg",
+    "description": "Config Branch 50 RCL",
+    "type": "drupal-custom-module",
+    "homepage": "https://github.com/ebremner17/br50_cfg",
+    "keywords": ["Drupal"]
+}
