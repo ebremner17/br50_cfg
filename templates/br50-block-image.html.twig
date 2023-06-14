@@ -1,0 +1,16 @@
+<picture class="br50-picture">
+  {% if image.sources %}
+    {#
+    Internet Explorer 9 doesn't recognise source elements that are wrapped in
+    picture tags. See http://scottjehl.github.io/picturefill/#ie9
+    #}
+    <!--[if IE 9]><video style="display: none;"><![endif]-->
+    {% for source in image.sources %}
+      <source srcset="{{ source.srcset|raw }}" media="{{ source.media }}" type="{{ source.type }}" />
+    {% endfor %}
+    <!--[if IE 9]></video><![endif]-->
+  {% endif %}
+  {# The controlling image, with the fallback image in srcset. #}
+  <img class="uw-picture__fallback" src="{{ image.img_element }}" alt="{{ image.alt }}">
+</picture>
+

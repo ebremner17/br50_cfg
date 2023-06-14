@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function br50_cfg_theme($existing, $type, $theme, $path) {
+
+  return [
+    'br50_block_image' => [
+      'variables' => [
+        'image' => NULL,
+      ],
+    ],
+  ];
+}
