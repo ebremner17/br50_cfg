@@ -11,5 +11,10 @@ function br50_cfg_theme($existing, $type, $theme, $path) {
         'image' => NULL,
       ],
     ],
+    'br50_block_text' => [
+      'variables' => [
+        'text' => NULL,
+      ],
+    ],
   ];
 }
