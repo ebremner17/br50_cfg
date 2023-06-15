@@ -1,5 +1,7 @@
 <?php
 
+use Drupal\Core\Form\FormStateInterface;
+
 /**
  * Implements hook_theme().
  */
@@ -18,3 +20,74 @@ function br50_cfg_theme($existing, $type, $theme, $path) {
     ],
   ];
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function br50_cfg_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  // If on node add/edit for dugout, add custom submit.
+  if (
+    $form_id == 'node_br50_ct_dugout_edit_form' ||
+    $form_id == 'node_br50_ct_dugout_form'
+  ) {
+    $form['actions']['submit']['#submit'][] = '_br50_cfg_dugout_form_submit';
+  }
+}
+
+/**
+ * Custom submit for dugout.
+ *
+ * @param array $form
+ *   The form.
+ * @param FormStateInterface $form_state
+ *   The form state.
+ */
+function _br50_cfg_dugout_form_submit(array $form, FormStateInterface $form_state) {
+
+  // Get the values from the form state.
+  $values = $form_state->getValues();
+
+  // If current issue is set, then set all others to
+  // not be the current issue.
+  if ($values['field_br50_dugout_current']['value']) {
+
+    // Get the current nid so that we do not set
+    // the value to not be current.
+    $current_nid = $values['nid'];
+
+    // Get all the current nodes that are dugout.
+    $nodes = \Drupal::entityTypeManager()
+      ->getStorage('node')
+      ->loadByProperties(
+        [
+          'type' => 'br50_ct_dugout',
+          'status' => 1
+        ]
+      );
+
+    // Step through each of the nodes and set
+    // the current issue to false.
+    foreach ($nodes as $node) {
+
+      // If not the current node, set the current
+      // issue to false.
+      if ($node->id() !== $current_nid) {
+        $node->field_br50_dugout_current = FALSE;
+        $node->save();
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ *
+ * Add views template suggestions.
+ *
+ * @inheritdoc
+ */
+function br50_cfg_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+  $suggestions[] = 'views_view__' . $variables['view']->id();
+}
+
