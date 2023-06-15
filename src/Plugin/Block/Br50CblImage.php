@@ -76,7 +76,7 @@ class Br50CblImage extends BlockBase implements ContainerFactoryPluginInterface 
     $media = $this->entityTypeManager->getStorage('media')->load($this->configuration['image']);
 
     // Get the image sources.
-    $sources = $this->prepareResponsiveImage($media, 'ris_br50_responsive');
+    $sources = _br50_theme_prepare_responsive_image($media, 'ris_br50_responsive');
 
     // Set the image variables for the template.
     $image['alt'] = $sources['alt'];
@@ -121,57 +121,5 @@ class Br50CblImage extends BlockBase implements ContainerFactoryPluginInterface 
     // Set the values that are needed and required.
     $this->configuration['image'] = $values['image'];
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  private function prepareResponsiveImage(?EntityInterface $entity, string $image_style): array {
-
-    // Ensure that we can load an entity on the media.
-    if ($entity && isset($entity->field_media_image->entity)) {
-
-      // Load in the file object if we have one.
-      if ($file = $entity->field_media_image->entity) {
-
-        // Need to set these variables so that responsive image function,
-        // has all the necessary info to process the image style.
-        $variables['uri'] = $file->getFileUri();
-        $variables['responsive_image_style_id'] = $image_style;
-
-        // Set the alt for the image.
-        $variables['alt'] = $entity->field_media_image->alt;
-
-        // This is a function from the responsive image module that sets all
-        // the variables for the sources of the responsive image.
-        template_preprocess_responsive_image($variables);
-
-        // Step through each of the sources and setup our own sources array.
-        foreach ($variables['sources'] as $source) {
-
-          $srcset = $source->storage()['srcset']->value();
-          $srcset_parts = explode('/', $srcset);
-
-          foreach ($srcset_parts as $srcset_part) {
-            if (strpos($srcset_part, 'uw_is') !== FALSE) {
-              $style = $srcset_part;
-              break;
-            }
-          }
-
-          $variables['responsive_sources'][] = [
-            'srcset' => $srcset,
-            'media' => $source->storage()['media']->value(),
-            'type' => $source->storage()['type']->value(),
-            'style' => $image_style,
-          ];
-        }
-
-        return $variables;
-      }
-    }
-
-    return [];
-  }
-
 
 }
