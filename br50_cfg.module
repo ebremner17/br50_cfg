@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\Entity\Media;
+use Drupal\file\Entity\File;
 
 /**
  * Implements hook_theme().
@@ -16,6 +18,11 @@ function br50_cfg_theme($existing, $type, $theme, $path) {
     'br50_block_text' => [
       'variables' => [
         'text' => NULL,
+      ],
+    ],
+    'br50_block_image_gallery' => [
+      'variables' => [
+        'images' => NULL,
       ],
     ],
   ];
@@ -91,3 +98,57 @@ function br50_cfg_theme_suggestions_views_view_alter(array &$suggestions, array 
   $suggestions[] = 'views_view__' . $variables['view']->id();
 }
 
+/**
+ * Implements hook_preprocess_views_view_field().
+ */
+function br50_cfg_preprocess_views_view_field(&$variables) {
+
+  // Get view and field.
+  $view = $variables['view'];
+  $field = $variables['field'];
+
+  // If we are on the dugout view and the global text,
+  // replace the fid with the link to the dugout pdf.
+  if (
+    $view->id() == 'br50_view_dugout' &&
+    $field->field == 'nothing'
+  ) {
+
+    // Get the output of the field.
+    $output = $variables['output']->jsonSerialize();
+
+    // If there is an integer with an href, get the mid.
+    if (preg_match('/href\=\"(.*?)\"/', $output, $match) == 1) {
+      $mid = $match[1];
+    }
+
+    // If there is an mid, replace with a link to the pdf.
+    if ($mid) {
+
+      // Get the media entity.
+      $media = Media::load($mid);
+
+      // Get the file id, since it can be different
+      // from the media id.
+      $fid = $media->field_media_document->target_id;
+
+      // Get the file entity.
+      $file = File::load($fid);
+
+      // Get the uri of the file.
+      $uri = $file->getFileUri();
+
+      // Get the url from the uri.
+      $url = \Drupal::service('file_url_generator')
+        ->generateAbsoluteString($uri);
+
+      // Replace the mid with the url to the pdf.
+      $output = str_replace('"' . $mid . '"', '"' . $url . '"', $output);
+
+      // Replace the output of the views field.
+      $variables['output'] = [
+        '#markup' => $output,
+      ];
+    }
+  }
+}

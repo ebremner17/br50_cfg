@@ -1,0 +1,7 @@
+br50_site.settings:
+  path: '/admin/config/site/settings'
+  defaults:
+    _form: '\Drupal\br50_cfg\Form\Br50SiteSettingsForm'
+    _title: 'Site settings'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,23 @@
+<div class="br50-image-gallery owl-carousel owl-theme">
+  {% for image in images %}
+    <div class="br50-image-gallery__item item">
+      <picture class="br50-picture">
+        {% if image.sources %}
+          <!--[if IE 9]><video style="display: none;"><![endif]-->
+          {% for source in image.sources %}
+            <source srcset="{{ source.srcset|raw }}" media="{{ source.media }}" type="{{ source.type }}" />
+          {% endfor %}
+          <!--[if IE 9]></video><![endif]-->
+        {% endif %}
+        <img class="uw-picture__fallback" src="{{ image.img_element }}" alt="{{ image.alt }}">
+      </picture>
+      {% if image.caption %}
+        <div class="br50-caption">
+          <div class="br50-caption__box">
+            {{ image.caption }}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
