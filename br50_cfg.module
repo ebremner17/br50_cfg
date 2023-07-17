@@ -25,6 +25,11 @@ function br50_cfg_theme($existing, $type, $theme, $path) {
         'images' => NULL,
       ],
     ],
+    'br50_block_remote_video' => [
+      'variables' => [
+        'video' => NULL,
+      ],
+    ],
   ];
 }
 
