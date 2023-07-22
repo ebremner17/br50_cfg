@@ -5,3 +5,10 @@ br50_site.settings:
     _title: 'Site settings'
   requirements:
     _permission: 'administer site configuration'
+players_site.site_notice:
+  path: '/admin/config/site/notices'
+  defaults:
+    _form: '\Drupal\br50_cfg\Form\Br50SiteNoticesForm'
+    _title: 'Site notices'
+  requirements:
+    _permission: 'administer site notice'
